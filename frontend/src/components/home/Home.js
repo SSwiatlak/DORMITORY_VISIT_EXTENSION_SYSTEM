@@ -2,7 +2,27 @@ import React, { useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { UserVisitsContext } from '../../contexts/UserVisitsContext';
 import { Row, Col, Container, Card, Table } from 'react-bootstrap';
+import { Calendar } from 'fullcalendar'
 import './Home.css';
+import Fullcalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import * as bootstrap from 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+
+
+function formatHours(date)
+{
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return hours + ':' + minutes;
+}
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -12,8 +32,26 @@ const Home = () => {
     return timeString.substr(0, 5); // Przycina string do formatu HH:mm
   };
 
+    const events = userVisits.map(visit => {
+        const startDateTimeStr = visit.start_date + "T" + visit.start_time;
+        const startDateTime = new Date(startDateTimeStr);
+
+        const endDateTimeStr = visit.end_date + "T" + visit.end_time;
+        const endDateTime = new Date(endDateTimeStr);
+
+        return {
+            title: visit.guest_first_name + " " + visit.guest_last_name,
+            start: startDateTime,
+            end: endDateTime,
+            backgroundColor: "#2c3e50"
+        }
+
+    });
+
   return (
     <>
+
+
       
         <Container className="user_data_container mt-3 mb-5">
           <Row>
@@ -34,7 +72,7 @@ const Home = () => {
             </Col>
           </Row>
         </Container>
-        <Container>
+    <Container>
       <Row className='row d-flex justify-content-center'>
         <Col>
           {userVisits && userVisits.length > 0 && (
@@ -42,33 +80,32 @@ const Home = () => {
               <Row className='mb-3'>
                 <h2><strong>Twoje wizyty:</strong></h2>
               </Row>
+
               <Row>
-                {userVisits.map((visit, index) => (
-                  <Col md={3} key={index} className="mb-4"> {/* Każda wizyta w osobnej kolumnie */}
-                    <Card className='card-hover'>
-                      <Card.Header className='card_header'>
-                        <strong>{visit.guest_first_name} {visit.guest_last_name}</strong> {/* Imię i nazwisko gościa na górze kafelka */}
-                      </Card.Header>
-                      <Card.Body>
-                        {/* Użycie tabeli do prezentacji dat i godzin */}
-                        <Table borderless size="sm">
-                          <tbody>
-                            <tr>
-                              <td><strong>Rozpoczęcie:</strong></td>
-                              <td>{visit.start_date}</td>
-                              <td>{formatTime(visit.start_time)}</td>
-                            </tr>
-                            <tr>
-                              <td><strong>Zakończenie:</strong></td>
-                              <td>{visit.end_date}</td>
-                              <td>{formatTime(visit.end_time)}</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
+                <Fullcalendar
+                //plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                initialView={"dayGridMonth"}
+                headerToolbar = {{
+                start: "today prev, next",
+                center: "title",
+                end: "dayGridMonth,timeGridWeek,timeGridDay",
+                }}
+                height={"90vh"}
+                eventColor={"#2c3e50"}
+                eventDisplay={"block"}
+                events = {events}
+                eventDidMount={(info) => {
+                    return new bootstrap.Popover(info.el, {
+                        title: info.event.title,
+                        placement: "auto",
+                        trigger: "hover",
+                        customClass: "popoverStyle",
+                        content:
+                          "<p> Godzina rozpoczęcia: " + formatHours(info.event.start) + "<br>Godzina zakończenia: " + formatHours(info.event.end) + "</p>",
+                        html: true,
+                        });
+                        }}
+                />
               </Row>
             </div>
           )}
@@ -81,8 +118,10 @@ const Home = () => {
         </Col>
       </Row>
     </Container>
+    )
     </>
   );
 };
+
 
 export default Home;
