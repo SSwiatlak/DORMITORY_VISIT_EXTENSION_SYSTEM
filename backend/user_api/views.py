@@ -94,7 +94,7 @@ class UserVisit(APIView):
     
     def send_email_api(self, guest_email, data):
         subject = "Your data has been saved"
-        message = f"Here is the result of your data submission: {data}"
+        message = f"Here is the result of your data submission: {data}" # Przemodelować treść maila
         from_email = os.environ.get("EMAIL")
         email_password = os.environ.get("EMAIL_PASSWORD")
         
