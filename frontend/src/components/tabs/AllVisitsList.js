@@ -649,12 +649,12 @@ const AllVisitsList = () => {
 
          <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
             <Modal.Header closeButton>
-               <Modal.Title>Anuluj wizytę</Modal.Title>
+               <Modal.Title>Wyrzuć gościa</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                <Form>
                   <Form.Group controlId="cancelReason">
-                     <Form.Label>Wprowadź powód anulowania wizyty</Form.Label>
+                     <Form.Label>Wprowadź powód wydalenia gościa</Form.Label>
                      <Form.Control
                         as="textarea"
                         rows={3}
@@ -679,7 +679,9 @@ const AllVisitsList = () => {
 
          <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
             <Modal.Header closeButton>
-               <Modal.Title>Odrzucenie wniosku o przedłużenie wizyty</Modal.Title>
+               <Modal.Title>
+                  Odrzucenie wniosku o przedłużenie wizyty
+               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                <Form>
