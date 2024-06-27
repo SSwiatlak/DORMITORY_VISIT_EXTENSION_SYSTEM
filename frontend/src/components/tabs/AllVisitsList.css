@@ -67,6 +67,6 @@
 }
 
 .overdue-inprogress {
-   background-color: red;
+   background-color: red !important;
    font-weight: bold;
 }
